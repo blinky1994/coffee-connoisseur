@@ -2,9 +2,18 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import Banner from '../components/banner'
+import Card from '../components/card'
+import coffeeStoresData from '../data/coffee-stores.json'
 
-export default function Home() {
+export async function getStaticProps(context) {
+  return {
+    props: {
+      coffeeStores: coffeeStoresData
+    }, // will be passed to the page component as props
+  }
+}
 
+export default function Home(props) {
   const handleOnBannerBtnClick = () => {
     console.log('Hi, banner button');
   }
@@ -28,18 +37,26 @@ export default function Home() {
         <Image src={'/static/hero-image.png'} alt='hero-image' width={1600} height={900}></Image>
       </div>
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
+      {
+        props.coffeeStores.length > 0 && 
+        <>
+          <h2 className={styles.heading2}>Stores near you</h2>
+          <div className={styles.cardLayout}>
+          { 
+                    props.coffeeStores.map((store, index) => (
+                    <Card 
+                    key={store.id}
+                    className={styles.card}
+                    name={store.name}
+                    imgUrl={store.imgUrl}
+                    href={`/coffee-store/${store.id}`}
+                  />
+                ))                   
+            }
+            </div>
+        </>
+      }
+
     </div>
   )
 }
