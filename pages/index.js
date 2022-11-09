@@ -4,10 +4,12 @@ import styles from '../styles/Home.module.css'
 import Banner from '../components/banner'
 import Card from '../components/card'
 import { fetchCoffeeStores } from '../lib/coffee-stores'
+import useTrackLocation from '../hooks/use-track-location'
+import { useEffect } from 'react'
 
 export async function getStaticProps(context) {  
   const coffeeStores = await fetchCoffeeStores();
-  console.log(coffeeStores);
+
   return {
     props: {
       coffeeStores
@@ -16,8 +18,29 @@ export async function getStaticProps(context) {
 }
 
 export default function Home(props) {
+  const { handleTrackLocation, latLong, locationErrorMsg, isFindingLocation } 
+   = useTrackLocation();
+   
+  useTrackLocation();
+
+  console.log({ latLong, locationErrorMsg });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (latLong) {
+        try {
+          const fetchedCoffeeStores = await fetchCoffeeStores(latLong);
+          console.log({fetchedCoffeeStores});
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    fetchData();
+  })
+
   const handleOnBannerBtnClick = () => {
-    console.log('Hi, banner button');
+    handleTrackLocation();
   }
 
   return (
@@ -30,9 +53,9 @@ export default function Home(props) {
 
       <main className={styles.main}>
       <Banner 
-        buttonText={'View stores nearby'}
-        handleOnClick={handleOnBannerBtnClick}
-      ></Banner>
+        buttonText={ isFindingLocation ? 'Locating...' : 'View stores nearby'}
+        handleOnClick={handleOnBannerBtnClick}/>
+        { locationErrorMsg && <p>Something went wrong: { locationErrorMsg }</p>}
       </main>
 
       <div className={styles.heroImage}>
@@ -42,19 +65,21 @@ export default function Home(props) {
       {
         props.coffeeStores.length > 0 && 
         <>
-          <h2 className={styles.heading2}>Stores near you</h2>
-          <div className={styles.cardLayout}>
-          { 
-                    props.coffeeStores.map((store, index) => (
-                    <Card 
-                    key={store.fsq_id}
-                    className={styles.card}
-                    name={store.name}
-                    imgUrl={store.imgUrl || "https://images.unsplash.com/photo-1589476993333-f55b84301219?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80"}
-                    href={`/coffee-store/${store.fsq_id}`}
-                  />
-                ))                   
-            }
+        <div className={styles.sectionWrapper}>
+          <h2 className={styles.heading2}>Stores in Hougang</h2>
+            <div className={styles.cardLayout}>
+            { 
+                      props.coffeeStores.map((store, index) => (
+                      <Card 
+                      key={store.id}
+                      className={styles.card}
+                      name={store.name}
+                      imgUrl={store.imgUrl || "https://images.unsplash.com/photo-1589476993333-f55b84301219?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80"}
+                      href={`/coffee-store/${store.id}`}
+                    />
+                  ))                   
+              }
+              </div>
             </div>
         </>
       }
