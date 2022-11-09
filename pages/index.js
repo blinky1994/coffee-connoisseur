@@ -3,13 +3,15 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import Banner from '../components/banner'
 import Card from '../components/card'
-import coffeeStoresData from '../data/coffee-stores.json'
+import { fetchCoffeeStores } from '../lib/coffee-stores'
 
-export async function getStaticProps(context) {
+export async function getStaticProps(context) {  
+  const coffeeStores = await fetchCoffeeStores();
+  console.log(coffeeStores);
   return {
     props: {
-      coffeeStores: coffeeStoresData
-    }, // will be passed to the page component as props
+      coffeeStores
+    }
   }
 }
 
@@ -45,11 +47,11 @@ export default function Home(props) {
           { 
                     props.coffeeStores.map((store, index) => (
                     <Card 
-                    key={store.id}
+                    key={store.fsq_id}
                     className={styles.card}
                     name={store.name}
-                    imgUrl={store.imgUrl}
-                    href={`/coffee-store/${store.id}`}
+                    imgUrl={store.imgUrl || "https://images.unsplash.com/photo-1589476993333-f55b84301219?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=627&q=80"}
+                    href={`/coffee-store/${store.fsq_id}`}
                   />
                 ))                   
             }
