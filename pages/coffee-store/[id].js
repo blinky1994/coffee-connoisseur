@@ -1,6 +1,5 @@
 import { useRouter } from "next/router"
 import Link from "next/link";
-import coffeeStoreData from '../../data/coffee-stores.json'
 import Head from "next/head";
 import styles from '../../styles/coffee-store.module.css'
 import Image from "next/image";
