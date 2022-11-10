@@ -33,20 +33,25 @@ export default function Home(props) {
     const fetchData = async () => {
       if (latLong) {
         try {
-          const fetchedCoffeeStores = await fetchCoffeeStores(latLong);
+          const res = 
+          await fetch(`/api/getCoffeeStoresByLocation?latlong=${latLong}&limit=${10}`);
+          
+          const coffeeStores = await res.json();
+
           dispatch({
             type: ACTION_TYPES.SET_COFFEE_STORES,
             payload: {
-                coffeeStores: fetchedCoffeeStores
+                coffeeStores
             }
         })
+        setCoffeeStoresError('');
         } catch (error) {
           setCoffeeStoresError(error);
         }
       }
     }
     fetchData();
-  })
+  }, [latLong, dispatch])
 
   const handleOnBannerBtnClick = () => {
     handleTrackLocation();
