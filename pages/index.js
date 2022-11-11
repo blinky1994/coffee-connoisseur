@@ -27,14 +27,14 @@ export default function Home(props) {
   const [coffeeStoresError, setCoffeeStoresError] = useState(null);
   const { dispatch, state } = useContext(StoreContext);
   const { coffeeStores, latLong } = state;
-  console.log({ latLong, locationErrorMsg });
+  // console.log({ latLong, locationErrorMsg });
 
   useEffect(() => {
     const fetchData = async () => {
       if (latLong) {
         try {
           const res = 
-          await fetch(`/api/getCoffeeStoresByLocation?latlong=${latLong}&limit=${10}`);
+          await fetch(`/api/getCoffeeStoresByLocation?latLong=${latLong}&limit=${10}`);
           
           const coffeeStores = await res.json();
 

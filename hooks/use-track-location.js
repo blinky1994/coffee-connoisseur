@@ -12,7 +12,6 @@ const useTrackLocation = () => {
         const latitude  = position.coords.latitude;
         const longitude = position.coords.longitude;
 
-        // setLatLong(`${latitude},${longitude}`);
         dispatch({
             type: ACTION_TYPES.SET_LAT_LONG,
             payload: {

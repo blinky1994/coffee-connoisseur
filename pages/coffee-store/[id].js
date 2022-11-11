@@ -15,12 +15,12 @@ export async function getStaticProps(staticProps) {
 
   const coffeeStores = await fetchCoffeeStores();
 
-  const findCoffeeStoresById = coffeeStores.find
+  const coffeeStoreFromContext = coffeeStores.find
   (store => store.id.toString() === params.id);
 
   return {
     props: {
-      coffeeStore: findCoffeeStoresById ?  findCoffeeStoresById : {}
+      coffeeStore: coffeeStoreFromContext ?  coffeeStoreFromContext : {}
     }
   }
 }
@@ -46,15 +46,50 @@ const CoffeeStore = (initialProps) => {
 
   const { state: { coffeeStores } } = useContext(StoreContext);
 
+  const handleCreateCoffeeStore = async (coffeeStore) => {
+    const { id, name, address, neighbourhood, voting, imgUrl } 
+    = coffeeStore;
+
+    try {
+      const response = await fetch('/api/createCoffeeStore', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          id,
+          name,
+          address: address || '',
+          neighbourhood: neighbourhood || '',
+          voting,
+          imgUrl
+         })
+      });
+
+      const dbCoffeeStore = await response.json();
+      console.log({dbCoffeeStore});
+
+    } catch (error) { 
+      console.error('Error creating coffee', error);
+    }
+  }
+
   useEffect(() => {
     if (isEmpty(initialProps.coffeeStore)) {
       if (coffeeStores.length > 0) {
-        const findCoffeeStoresById = coffeeStores.find
+        const coffeeStoreFromContext = coffeeStores.find
         (store => store.id.toString() === id);
-        setCoffeeStore(findCoffeeStoresById);
+
+        if (coffeeStoreFromContext) {
+          setCoffeeStore(coffeeStoreFromContext);
+          handleCreateCoffeeStore(coffeeStoreFromContext);
+        }
       }
+    } else {
+      //SSG
+      handleCreateCoffeeStore(initialProps.coffeeStore);
     }
-  }, [id, initialProps.coffeeStore, coffeeStores])
+  }, [id, initialProps, initialProps.coffeeStore, coffeeStores])
 
   if (router.isFallback) {
     return <div>Loading...</div>
