@@ -7,7 +7,9 @@ import cls from "classnames";
 import { fetchCoffeeStores } from "../../lib/coffee-stores";
 import { useContext, useState, useEffect } from "react";
 import { StoreContext } from "../../context/store-context";
-import {isEmpty } from '../../utils/'
+import { isEmpty } from '../../utils/'
+import useSWR from 'swr';
+import { fetcher } from "../../utils/fetcher";
 
 export async function getStaticProps(staticProps) {
 
@@ -45,10 +47,20 @@ const CoffeeStore = (initialProps) => {
   const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
 
   const { address, name, neighbourhood, imgUrl } = coffeeStore;
+
   const [ votingCount, setVotingCount ] = useState(1);
 
-
   const { state: { coffeeStores } } = useContext(StoreContext);
+
+  const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      console.log('data from SWR:', data);
+      setCoffeeStore(data[0]);
+      setVotingCount(data[0].voting);
+    }
+  }, [data]);
 
   const handleCreateCoffeeStore = async (coffeeStore) => {
     const { id, name, address, neighbourhood, voting, imgUrl } 
@@ -102,6 +114,10 @@ const CoffeeStore = (initialProps) => {
   const handleUpvoteButton = (event) => {
     let count = votingCount + 1;
     setVotingCount(count);
+  }
+
+  if (error) {
+    return <div>Something went wrong while retrieving page</div>
   }
 
   return (
