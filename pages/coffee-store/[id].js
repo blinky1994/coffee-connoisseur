@@ -44,6 +44,10 @@ const CoffeeStore = (initialProps) => {
 
   const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
 
+  const { address, name, neighbourhood, imgUrl } = coffeeStore;
+  const [ votingCount, setVotingCount ] = useState(1);
+
+
   const { state: { coffeeStores } } = useContext(StoreContext);
 
   const handleCreateCoffeeStore = async (coffeeStore) => {
@@ -95,13 +99,9 @@ const CoffeeStore = (initialProps) => {
     return <div>Loading...</div>
   }
 
-
-  
-
-  const { address, name, neighbourhood, imgUrl } = coffeeStore;
-
   const handleUpvoteButton = (event) => {
-    console.log(event);
+    let count = votingCount + 1;
+    setVotingCount(count);
   }
 
   return (
@@ -143,7 +143,7 @@ const CoffeeStore = (initialProps) => {
 
           <div className={styles.iconWrapper}>
             <Image alt={name} src="/static/icons/star.svg" width={24} height={24} />
-            <p className={styles.text}>1</p>
+            <p className={styles.text}>{votingCount }</p>
           </div>
 
           <button 
