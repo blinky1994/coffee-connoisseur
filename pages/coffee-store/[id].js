@@ -71,7 +71,6 @@ export async function getStaticPaths(staticProps) {
 
 const CoffeeStore = (initialProps) => {
   
-  console.log(initialProps.coffeeStore);
   const router = useRouter();
 
   const id = router.query.id;
