@@ -6,16 +6,17 @@ const getCoffeeStoreById = async (req, res) => {
         try {
             if (id) {
                 const records = await findRecordByFilter(id);
-
                 if (records.length !== 0) {
                     res.json(records);
+                } else {
+                    res.json({})
                 }
             } else {
                 res.status(400).json({ message: 'Id is missing' })
             }
     
         } catch (error) {
-            console.log(error);
+            console.error(error);
             res.status(500).json( { message: 'Something went wrong' });
         }
     }

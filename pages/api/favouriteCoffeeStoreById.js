@@ -24,7 +24,7 @@ const favouriteCoffeeStoreById = async (req, res) => {
 
                     if (updateRecord) {
                         const minifiedRecords = getMinifiedRecords(updateRecord);
-                        res.json({ minifiedRecords })
+                        res.json(minifiedRecords)
                     }
                    
                 } else {
